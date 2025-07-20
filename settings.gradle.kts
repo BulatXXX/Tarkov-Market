@@ -1,5 +1,6 @@
 pluginManagement {
     repositories {
+        gradlePluginPortal()
         google {
             content {
                 includeGroupByRegex("com\\.android.*")
@@ -8,10 +9,10 @@ pluginManagement {
             }
         }
         mavenCentral()
-        gradlePluginPortal()
     }
     plugins {
         id("org.jetbrains.kotlin.plugin.compose") version "2.0.21" apply false
+        id("com.apollographql.apollo3") version "4.1.0" apply false
     }
 }
 dependencyResolutionManagement {
@@ -24,4 +25,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tarkov Market"
 include(":app")
-include(":TarkovAPI")
+include(":data:tarkov-remote")
+include(":feature:profile")
+include(":feature:tarkov-market")
+include(":core")

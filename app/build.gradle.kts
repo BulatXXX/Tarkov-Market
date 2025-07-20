@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -40,6 +41,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.apollo.runtime)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -58,5 +60,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    implementation(project(":TarkovAPI"))
+    implementation(libs.dagger)
+    ksp(libs.dagger.compiler)
+
+    implementation(libs.okhttp.core)
+    implementation(libs.okhttp.logging)
+
+    implementation(project(":feature:tarkov-market"))
+    implementation(project(":feature:profile"))
+    implementation(project(":data:tarkov-remote"))
 }
