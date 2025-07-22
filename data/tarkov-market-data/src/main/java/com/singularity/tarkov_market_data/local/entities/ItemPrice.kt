@@ -1,4 +1,4 @@
-package com.singularity.tarkov_remote.models.entities
+package com.singularity.tarkov_market_data.local.entities
 
 import androidx.room.Entity
 
@@ -9,7 +9,7 @@ import androidx.room.Entity
 data class ItemPrice(
     val itemId: String,
     val mode: String,
-    val avg24Price: String,
-    val low224Price: String,
+    val avg24Price: Int,
+    val low24Price: Int,
     val updatedAt: Long,
 )

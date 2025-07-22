@@ -1,6 +1,6 @@
 package com.singularity.tarkov_market.model
 
-import com.singularity.tarkov_remote.models.SearchedItem
+import com.singularity.tarkov_market_data.remote.models.SearchedItem
 
 internal data class FleaMarketSearchScreenState(
     val query: String = "",

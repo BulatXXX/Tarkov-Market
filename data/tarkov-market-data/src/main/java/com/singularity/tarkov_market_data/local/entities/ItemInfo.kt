@@ -1,15 +1,14 @@
-package com.singularity.tarkov_remote.models.entities
+package com.singularity.tarkov_market_data.local.entities
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "item_language_info",
+    tableName = "item_info",
     primaryKeys = ["itemId", "languageCode"],
 )
 data class ItemInfo(
-    @PrimaryKey val itemId: String,
-    @PrimaryKey val languageCode: String,
+    val itemId: String,
+    val languageCode: String,
     val name: String,
     val description: String,
     val iconLink: String,

@@ -25,7 +25,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Tarkov Market"
 include(":app")
-include(":data:tarkov-remote")
+include(":data:tarkov-market-data")
 include(":feature:profile")
 include(":feature:tarkov-market")
 include(":core")

@@ -1,5 +1,6 @@
 package com.singularity.tarkov_market
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,12 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import com.singularity.tarkov_remote.models.DetailedItem
 import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
 import com.singularity.tarkov_market.model.FleaMarketSearchScreenIntent
 import com.singularity.tarkov_market.presenter.FleaMarketSearchScreenViewModel
-import com.singularity.tarkov_remote.models.SearchedItem
+import com.singularity.tarkov_market_data.remote.models.SearchedItem
 
 
 @Composable
@@ -52,7 +52,9 @@ fun SearchScreen(onItemClick: (name: String) -> Unit) {
 
         LazyColumn {
             items(state.searchedItems, key = { it.id }) { ui ->
-                ListItem(ui)
+                ListItem(ui){
+
+                }
                 HorizontalDivider(Modifier, 1.dp, Color.Gray)
             }
         }
@@ -60,11 +62,11 @@ fun SearchScreen(onItemClick: (name: String) -> Unit) {
 }
 
 @Composable
-fun ListItem(searchedItem: SearchedItem){
+fun ListItem(searchedItem: SearchedItem,onItemClick: () -> Unit){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp).clickable(onClick = {onItemClick() }),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(

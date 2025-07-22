@@ -55,7 +55,7 @@ dependencies {
     ksp(libs.dagger.compiler)
 
     implementation(libs.coil.compose)
-    implementation(project(":data:tarkov-remote"))
+    implementation(project(":data:tarkov-market-data"))
 
     implementation(project(":core"))
 }

@@ -7,13 +7,14 @@ plugins {
 
 apollo {
     service("default") {
-        packageName.set("com.singularity.tarkov_remote")
+        packageName.set("com.singularity.tarkov_market_data")
+        schemaFile.set(file("src/main/graphql/schema.graphqls"))
         generateKotlinModels.set(true)
     }
 }
 
 android {
-    namespace = "com.singularity.tarkov_remote"
+    namespace = "com.singularity.tarkov_market_data"
     compileSdk = 35
 
     defaultConfig {

@@ -1,4 +1,4 @@
-package com.singularity.tarkov_remote.di
+package com.singularity.tarkov_market_data.di
 
 import android.util.Log
 import com.apollographql.apollo.ApolloClient

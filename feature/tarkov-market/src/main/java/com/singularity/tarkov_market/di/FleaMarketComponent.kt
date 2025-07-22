@@ -1,6 +1,6 @@
 package com.singularity.tarkov_market.di
 
-import com.singularity.tarkov_remote.repository.FleaMarketRepository
+import com.singularity.tarkov_market_data.repository.FleaMarketRepository
 import dagger.Component
 import kotlin.properties.Delegates.notNull
 

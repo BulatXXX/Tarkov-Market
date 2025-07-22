@@ -68,5 +68,5 @@ dependencies {
 
     implementation(project(":feature:tarkov-market"))
     implementation(project(":feature:profile"))
-    implementation(project(":data:tarkov-remote"))
+    implementation(project(":data:tarkov-market-data"))
 }

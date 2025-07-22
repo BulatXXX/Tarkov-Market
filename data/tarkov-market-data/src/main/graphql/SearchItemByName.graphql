@@ -1,4 +1,4 @@
-query searchItemByName($name: String!, $lang: LanguageCode!, $gamemode: GameMode!,$limit:Int, $offset:Int) {
+query SearchItemByName($name: String!, $lang: LanguageCode!, $gamemode: GameMode!,$limit:Int, $offset:Int) {
     items(lang: $lang, name: $name, gameMode: $gamemode,limit: $limit,offset: $offset) {
         id
         name
