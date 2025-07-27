@@ -18,7 +18,7 @@ sealed interface TarkovMarketGraph
 data object SearchRoute : TarkovMarketGraph
 
 @Serializable
-data class ItemRoute(val name: String) : TarkovMarketGraph
+data class ItemRoute(val id: String) : TarkovMarketGraph
 
 
 fun NavGraphBuilder.tarkovNavGraph(navController: NavHostController) {
@@ -34,7 +34,7 @@ fun NavGraphBuilder.tarkovNavGraph(navController: NavHostController) {
 
         composable<ItemRoute> { backStackEntry ->
             val route: ItemRoute = backStackEntry.toRoute()
-            ItemScreen(route.name)
+            ItemScreen(route.id)
         }
 
 }

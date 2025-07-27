@@ -1,15 +1,17 @@
 query GetItemById($id: ID!, $lang: LanguageCode!) {
-    pve: item(id: $id, lang: $lang, gameMode: pve) {
+    info: item(id: $id, lang: $lang) {
         id
         name
         description
         iconLink
         image512pxLink
+    }
+    pvp_price: item(id: $id, gameMode: regular) {
         avg24hPrice
         low24hPrice
     }
 
-    pvp: item(id: $id, gameMode: regular) {
+    pve_price: item(id: $id, gameMode: pve) {
         avg24hPrice
         low24hPrice
     }

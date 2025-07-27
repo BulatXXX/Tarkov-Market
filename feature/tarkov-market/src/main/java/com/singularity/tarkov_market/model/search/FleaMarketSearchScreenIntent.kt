@@ -1,4 +1,4 @@
-package com.singularity.tarkov_market.model
+package com.singularity.tarkov_market.model.search
 
 internal sealed class FleaMarketSearchScreenIntent {
     data class SearchItem(val query: String) : FleaMarketSearchScreenIntent()

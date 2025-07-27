@@ -13,6 +13,7 @@ internal interface FleaMarketComponent {
     }
 
     val viewModelFactory: FleaMarketViewModelFactory
+    val itemViewModelFactory: FleaMarketItemViewModelFactory
 }
 
 interface FleaMarketDeps {

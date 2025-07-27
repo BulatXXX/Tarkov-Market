@@ -1,11 +1,11 @@
-package com.singularity.tarkov_market_data.remote.models
+package com.singularity.tarkov_market_data.models
 
 data class DetailedItem(
     val id: String,
     val name: String,
     val description: String,
-    val avg24hPriceRegular: Int?,
-    val low24hPriceRegular: Int?,
+    val avg24hPricePvp: Int?,
+    val low24hPricePvp: Int?,
     val avg24hPricePve: Int?,
     val low24hPricePve: Int?,
     val iconLink: String,

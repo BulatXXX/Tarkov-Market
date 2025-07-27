@@ -1,17 +1,12 @@
 package com.singularity.tarkov_market_data.repository
 
-import com.apollographql.apollo.ApolloClient
-import com.singularity.tarkov_market_data.SearchItemByNameQuery
 import com.singularity.tarkov_market_data.type.GameMode
 import com.singularity.tarkov_market_data.type.LanguageCode
-import com.singularity.tarkov_market_data.remote.models.DetailedItem
-import com.singularity.tarkov_market_data.remote.models.SearchedItem
+import com.singularity.tarkov_market_data.models.SearchedItem
 import com.singularity.tarkov_market_data.local.dao.ItemFavouriteDao
 import com.singularity.tarkov_market_data.local.dao.ItemInfoDao
 import com.singularity.tarkov_market_data.local.dao.ItemPriceDao
-import com.singularity.tarkov_market_data.local.entities.ItemFavourite
-import com.singularity.tarkov_market_data.local.entities.ItemInfo
-import com.singularity.tarkov_market_data.local.entities.ItemPrice
+import com.singularity.tarkov_market_data.models.DetailedItem
 import com.singularity.tarkov_market_data.remote.services.TarkovMarketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +29,7 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
         limit: Int,
         offset: Int,
     ): Flow<List<SearchedItem>> = flow {
-        val queryRes = tarkovMarketService.searchByName(
+        val itemsList = tarkovMarketService.searchByName(
             query = query,
             language = language,
             gameMode = gameMode,
@@ -49,7 +44,13 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
                 iconLink = it.iconLink.orEmpty(),
             )
         }
-        emit(queryRes)
+        emit(itemsList)
+    }.flowOn(Dispatchers.IO)
+
+    override fun getItemById(id: String, language: LanguageCode): Flow<DetailedItem> = flow {
+        val detailedItem = tarkovMarketService
+            .getItemById(id = id, language = language)
+        emit(detailedItem)
     }.flowOn(Dispatchers.IO)
 
 }

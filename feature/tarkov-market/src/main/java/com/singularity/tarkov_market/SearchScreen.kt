@@ -29,13 +29,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
-import com.singularity.tarkov_market.model.FleaMarketSearchScreenIntent
+import com.singularity.tarkov_market.model.search.FleaMarketSearchScreenIntent
 import com.singularity.tarkov_market.presenter.FleaMarketSearchScreenViewModel
-import com.singularity.tarkov_market_data.remote.models.SearchedItem
+import com.singularity.tarkov_market_data.models.SearchedItem
 
 
 @Composable
-fun SearchScreen(onItemClick: (name: String) -> Unit) {
+fun SearchScreen(onItemClick: (id: String) -> Unit) {
     val appComponent =
         remember {
             DaggerFleaMarketComponent.builder().deps(deps = FleaMarketDepsProvider.deps).build()
@@ -51,9 +51,9 @@ fun SearchScreen(onItemClick: (name: String) -> Unit) {
         }
 
         LazyColumn {
-            items(state.searchedItems, key = { it.id }) { ui ->
-                ListItem(ui){
-
+            items(state.searchedItems, key = { it.id }) { searchedItem ->
+                ListItem(searchedItem){
+                    onItemClick(searchedItem.id)
                 }
                 HorizontalDivider(Modifier, 1.dp, Color.Gray)
             }
