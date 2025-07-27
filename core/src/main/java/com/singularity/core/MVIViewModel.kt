@@ -22,7 +22,7 @@ abstract class MVIViewModel<Intent, State, Effect> : ViewModel(){
 
     protected abstract fun setInitialState(): State
 
-    abstract fun handleIntent(intent: Intent)
+    protected abstract fun handleIntent(intent: Intent)
 
     init {
         viewModelScope.launch {

@@ -1,6 +1,7 @@
 package com.singularity.tarkov_market_data.local.entities
 
 import androidx.room.Entity
+import com.singularity.tarkov_market_data.type.LanguageCode
 
 @Entity(
     tableName = "item_info",
@@ -8,7 +9,7 @@ import androidx.room.Entity
 )
 data class ItemInfo(
     val itemId: String,
-    val languageCode: String,
+    val languageCode: LanguageCode,
     val name: String,
     val description: String,
     val iconLink: String,

@@ -1,11 +1,13 @@
 package com.singularity.tarkov_market
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,6 +23,7 @@ import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
 import com.singularity.tarkov_market.presenter.FleaMarketItemScreenViewModel
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.singularity.tarkov_market.model.item.FleaMarketItemScreenIntent
 import kotlinx.coroutines.Dispatchers
@@ -46,16 +49,20 @@ fun ItemScreen(id: String) {
                 Text(state.detailedItem?.name.orEmpty())
                 IconButton(onClick = {
                     viewModel.sendIntent(FleaMarketItemScreenIntent.ToggleFavourite)
+                    Log.d("UI", state.detailedItem?.isFavourite.toString())
                 }) {
                     Icon(
+                        modifier = Modifier.size(100.dp),
                         imageVector =
                             if (state.detailedItem?.isFavourite == true) {
-                                Icons.Filled.Star
+                                Icons.Default.Favorite
                             } else {
-                                Icons.Outlined.Star
+                                Icons.Default.FavoriteBorder
                             }, contentDescription = ""
                     )
                 }
+
+
             }
         }
     }

@@ -16,4 +16,7 @@ interface FleaMarketRepository {
     ): Flow<List<SearchedItem>>
     fun getItemById(id: String, language: LanguageCode): Flow<DetailedItem>
 
+    suspend fun saveItem(detailedItem: DetailedItem, language: LanguageCode = LanguageCode.en)
+    suspend fun deleteItem(id: String)
+
 }

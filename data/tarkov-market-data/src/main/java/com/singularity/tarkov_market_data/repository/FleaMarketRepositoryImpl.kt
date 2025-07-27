@@ -6,12 +6,16 @@ import com.singularity.tarkov_market_data.models.SearchedItem
 import com.singularity.tarkov_market_data.local.dao.ItemFavouriteDao
 import com.singularity.tarkov_market_data.local.dao.ItemInfoDao
 import com.singularity.tarkov_market_data.local.dao.ItemPriceDao
+import com.singularity.tarkov_market_data.local.entities.ItemFavourite
+import com.singularity.tarkov_market_data.local.entities.ItemInfo
+import com.singularity.tarkov_market_data.local.entities.ItemPrice
 import com.singularity.tarkov_market_data.models.DetailedItem
 import com.singularity.tarkov_market_data.remote.services.TarkovMarketService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 const val PRICE_IS_NULL = -1
@@ -50,7 +54,45 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
     override fun getItemById(id: String, language: LanguageCode): Flow<DetailedItem> = flow {
         val detailedItem = tarkovMarketService
             .getItemById(id = id, language = language)
-        emit(detailedItem)
+        val fav = favDao.isFavourite(id)
+        emit(detailedItem.copy(isFavourite = fav))
     }.flowOn(Dispatchers.IO)
+
+    override suspend fun saveItem(detailedItem: DetailedItem, language: LanguageCode) {
+        detailedItem.apply {
+            favDao.upsert(ItemFavourite(id))
+            priceDao.upsert(ItemPrice(
+                itemId = id,
+                mode = GameMode.pve,
+                avg24Price = avg24hPricePve?: PRICE_IS_NULL,
+                low24Price = low24hPricePve?: PRICE_IS_NULL,
+                updatedAt = LocalDateTime.now()
+            ))
+            priceDao.upsert(ItemPrice(
+                itemId = id,
+                mode = GameMode.regular,
+                avg24Price = avg24hPricePvp?: PRICE_IS_NULL,
+                low24Price = low24hPricePvp?: PRICE_IS_NULL,
+                updatedAt = LocalDateTime.now()
+            ))
+            infoDao.upsert(
+                ItemInfo(
+                    itemId = id,
+                    name = name,
+                    description = description,
+                    iconLink = iconLink,
+                    image512PxLink = image512PxLink,
+                    languageCode = language
+                )
+            )
+        }
+
+    }
+
+    override suspend fun deleteItem(id: String) {
+        favDao.delete(id)
+        infoDao.delete(id)
+        priceDao.delete(id)
+    }
 
 }
