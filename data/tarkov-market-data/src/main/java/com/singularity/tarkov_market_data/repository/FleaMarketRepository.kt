@@ -1,6 +1,7 @@
 package com.singularity.tarkov_market_data.repository
 
 import com.singularity.tarkov_market_data.models.DetailedItem
+import com.singularity.tarkov_market_data.models.FavouriteItem
 import com.singularity.tarkov_market_data.type.GameMode
 import com.singularity.tarkov_market_data.type.LanguageCode
 import com.singularity.tarkov_market_data.models.SearchedItem
@@ -18,5 +19,6 @@ interface FleaMarketRepository {
 
     suspend fun saveItem(detailedItem: DetailedItem, language: LanguageCode = LanguageCode.en)
     suspend fun deleteItem(id: String)
+    fun observeFavourites(languageCode: LanguageCode,gameMode: GameMode): Flow<List<FavouriteItem>>
 
 }

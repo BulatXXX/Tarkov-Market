@@ -6,26 +6,33 @@ import com.singularity.tarkov_market_data.models.SearchedItem
 import com.singularity.tarkov_market_data.local.dao.ItemFavouriteDao
 import com.singularity.tarkov_market_data.local.dao.ItemInfoDao
 import com.singularity.tarkov_market_data.local.dao.ItemPriceDao
+import com.singularity.tarkov_market_data.local.db.TarkovItemsDatabase
 import com.singularity.tarkov_market_data.local.entities.ItemFavourite
-import com.singularity.tarkov_market_data.local.entities.ItemInfo
-import com.singularity.tarkov_market_data.local.entities.ItemPrice
+import com.singularity.tarkov_market_data.local.entities.toItemInfo
+import com.singularity.tarkov_market_data.local.entities.toItemPrice
 import com.singularity.tarkov_market_data.models.DetailedItem
+import com.singularity.tarkov_market_data.models.FavouriteItem
 import com.singularity.tarkov_market_data.remote.services.TarkovMarketService
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
-import java.time.LocalDateTime
 import javax.inject.Inject
 
-const val PRICE_IS_NULL = -1
 
 internal class FleaMarketRepositoryImpl @Inject constructor(
+    private val db: TarkovItemsDatabase,
     private val tarkovMarketService: TarkovMarketService,
     private val infoDao: ItemInfoDao,
     private val priceDao: ItemPriceDao,
     private val favDao: ItemFavouriteDao,
 ) : FleaMarketRepository {
+
     override fun search(
         query: String,
         language: LanguageCode,
@@ -43,8 +50,8 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
             SearchedItem(
                 id = it.id,
                 name = it.name.orEmpty(),
-                avg24hPrice = it.avg24hPrice ?: PRICE_IS_NULL,
-                low24hPrice = it.low24hPrice ?: PRICE_IS_NULL,
+                avg24hPrice = it.avg24hPrice,
+                low24hPrice = it.low24hPrice,
                 iconLink = it.iconLink.orEmpty(),
             )
         }
@@ -60,39 +67,45 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
 
     override suspend fun saveItem(detailedItem: DetailedItem, language: LanguageCode) {
         detailedItem.apply {
-            favDao.upsert(ItemFavourite(id))
-            priceDao.upsert(ItemPrice(
-                itemId = id,
-                mode = GameMode.pve,
-                avg24Price = avg24hPricePve?: PRICE_IS_NULL,
-                low24Price = low24hPricePve?: PRICE_IS_NULL,
-                updatedAt = LocalDateTime.now()
-            ))
-            priceDao.upsert(ItemPrice(
-                itemId = id,
-                mode = GameMode.regular,
-                avg24Price = avg24hPricePvp?: PRICE_IS_NULL,
-                low24Price = low24hPricePvp?: PRICE_IS_NULL,
-                updatedAt = LocalDateTime.now()
-            ))
-            infoDao.upsert(
-                ItemInfo(
-                    itemId = id,
-                    name = name,
-                    description = description,
-                    iconLink = iconLink,
-                    image512PxLink = image512PxLink,
-                    languageCode = language
-                )
-            )
+            favDao.insert(ItemFavourite(id))
+            priceDao.upsert(detailedItem.toItemPrice(GameMode.pve))
+            priceDao.upsert(detailedItem.toItemPrice(GameMode.regular))
+            infoDao.upsert(detailedItem.toItemInfo(language))
         }
-
     }
 
     override suspend fun deleteItem(id: String) {
+
         favDao.delete(id)
         infoDao.delete(id)
         priceDao.delete(id)
+
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    override fun observeFavourites(
+        languageCode: LanguageCode,
+        gameMode: GameMode
+    ): Flow<List<FavouriteItem>> =
+        favDao.observeFavouritesIds().flowOn(Dispatchers.IO).flatMapLatest { ids ->
+            if (ids.isEmpty()) return@flatMapLatest flowOf(emptyList())
+            val itemFlows: List<Flow<FavouriteItem?>> = ids.map { id ->
+                combine(
+                    infoDao.observeInfo(id, languageCode),
+                    priceDao.observePrice(id, gameMode),
+                ) { info, price ->
+                    if (info != null && price != null) {
+                        FavouriteItem(
+                            id = id,
+                            name = info.name,
+                            iconLink = info.iconLink,
+                            avg24hPrice = price.avg24Price,
+                            low24hPrice = price.low24Price
+                        )
+                    } else null
+                }
+
+            }
+            combine(itemFlows) { list -> list.filterNotNull() }
+        }.distinctUntilChanged()
 }

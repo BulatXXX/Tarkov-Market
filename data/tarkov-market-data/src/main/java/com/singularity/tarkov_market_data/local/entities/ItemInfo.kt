@@ -1,6 +1,7 @@
 package com.singularity.tarkov_market_data.local.entities
 
 import androidx.room.Entity
+import com.singularity.tarkov_market_data.models.DetailedItem
 import com.singularity.tarkov_market_data.type.LanguageCode
 
 @Entity(
@@ -15,3 +16,12 @@ data class ItemInfo(
     val iconLink: String,
     val image512PxLink: String,
     )
+
+internal fun DetailedItem.toItemInfo(languageCode: LanguageCode) = ItemInfo(
+    itemId = id,
+    name = name,
+    description = description,
+    iconLink = iconLink,
+    image512PxLink = image512PxLink,
+    languageCode = languageCode
+)

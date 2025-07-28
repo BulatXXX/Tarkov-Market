@@ -21,25 +21,30 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
-import com.singularity.tarkov_market.presenter.FleaMarketItemScreenViewModel
+import com.singularity.tarkov_market.presenter.ItemDetailsViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.singularity.tarkov_market.model.item.FleaMarketItemScreenIntent
+import com.singularity.tarkov_market.di.factories.ItemDetailsViewModelFactory
+import com.singularity.tarkov_market.model.item.ItemDetailsIntent
 import kotlinx.coroutines.Dispatchers
 
 @Composable
-fun ItemScreen(id: String) {
+fun ItemDetailsScreen(id: String) {
     val appComponent = remember {
         DaggerFleaMarketComponent.builder().deps(deps = FleaMarketDepsProvider.deps).build()
     }
+    val assistedFactory = remember { appComponent.itemViewModelFactory }
+    val factory = remember(id) {
+        ItemDetailsViewModelFactory(assistedFactory, id)
+    }
     val viewModel =
-        viewModel<FleaMarketItemScreenViewModel>(factory = appComponent.itemViewModelFactory)
+        viewModel<ItemDetailsViewModel>(factory = factory)
 
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(Dispatchers.IO) {
-        viewModel.sendIntent(FleaMarketItemScreenIntent.LoadItem(id))
+        viewModel.sendIntent(ItemDetailsIntent.LoadItem(id))
     }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (state.isLoading) CircularProgressIndicator()
@@ -48,7 +53,7 @@ fun ItemScreen(id: String) {
                 AsyncImage(state.detailedItem?.image512PxLink, "")
                 Text(state.detailedItem?.name.orEmpty())
                 IconButton(onClick = {
-                    viewModel.sendIntent(FleaMarketItemScreenIntent.ToggleFavourite)
+                    viewModel.sendIntent(ItemDetailsIntent.ToggleFavourite)
                     Log.d("UI", state.detailedItem?.isFavourite.toString())
                 }) {
                     Icon(

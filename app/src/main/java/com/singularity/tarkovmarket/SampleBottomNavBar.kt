@@ -12,15 +12,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.toRoute
 import com.singularity.profile.ProfileRoute
-import com.singularity.profile.ProfileRoutes
+import com.singularity.tarkov_market.FavouriteRoute
 import com.singularity.tarkov_market.SearchRoute
-import com.singularity.tarkov_market.TarkovMarketGraph
 
 @Composable
 fun SampleBottomNavBar(navController: NavHostController) {
@@ -61,8 +58,16 @@ fun SampleBottomNavBar(navController: NavHostController) {
         )
 
         NavigationBarItem(
-            selected = false, // если у вас есть ещё третий таб, добавьте его аналогично
-            onClick = { /* … */ },
+            selected = true,
+            onClick = {
+                navController.navigate(FavouriteRoute) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState   = true
+                }
+            },
             icon  = { Icon(Icons.Filled.Favorite, contentDescription = null) },
             label = { Text("Favourite") }
         )

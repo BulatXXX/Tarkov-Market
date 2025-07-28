@@ -1,5 +1,8 @@
 package com.singularity.tarkov_market.di
 
+import com.singularity.tarkov_market.di.factories.FavouritesViewModelFactory
+import com.singularity.tarkov_market.di.factories.ItemDetailsViewModelAssistedFactory
+import com.singularity.tarkov_market.di.factories.SearchViewModelFactory
 import com.singularity.tarkov_market_data.repository.FleaMarketRepository
 import dagger.Component
 import kotlin.properties.Delegates.notNull
@@ -12,8 +15,9 @@ internal interface FleaMarketComponent {
         fun build(): FleaMarketComponent
     }
 
-    val viewModelFactory: FleaMarketViewModelFactory
-    val itemViewModelFactory: FleaMarketItemViewModelFactory
+    val searchViewModelFactory: SearchViewModelFactory
+    val itemViewModelFactory: ItemDetailsViewModelAssistedFactory
+    val favouritesViewModelFactory: FavouritesViewModelFactory
 }
 
 interface FleaMarketDeps {

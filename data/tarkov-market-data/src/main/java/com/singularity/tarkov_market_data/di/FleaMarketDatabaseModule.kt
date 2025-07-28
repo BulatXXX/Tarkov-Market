@@ -17,7 +17,7 @@ internal object FleaMarketDatabaseModule {
             context,
             TarkovItemsDatabase::class.java,
             "tarkov.db"
-        ).build()
+        ).enableMultiInstanceInvalidation().build()
 
     @Provides
     fun provideFavouriteDao(db: TarkovItemsDatabase) = db.favouriteDao()

@@ -3,8 +3,8 @@ package com.singularity.tarkov_market.presenter
 import androidx.lifecycle.viewModelScope
 import com.singularity.tarkov_market_data.repository.FleaMarketRepository
 import com.singularity.core.MVIViewModel
-import com.singularity.tarkov_market.model.search.FleaMarketSearchScreenIntent
-import com.singularity.tarkov_market.model.search.FleaMarketSearchScreenState
+import com.singularity.tarkov_market.model.search.SearchIntent
+import com.singularity.tarkov_market.model.search.SearchState
 import com.singularity.tarkov_market_data.type.GameMode
 import com.singularity.tarkov_market_data.type.LanguageCode
 import kotlinx.coroutines.Job
@@ -14,20 +14,20 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-internal class FleaMarketSearchScreenViewModel @Inject constructor(
+internal class SearchViewModel @Inject constructor(
     val fleaMarketRepository: FleaMarketRepository
-) : MVIViewModel<FleaMarketSearchScreenIntent, FleaMarketSearchScreenState, Nothing>() {
+) : MVIViewModel<SearchIntent, SearchState, Nothing>() {
     private var currentSearchJob: Job? = null
 
-    override fun setInitialState() = FleaMarketSearchScreenState()
+    override fun setInitialState() = SearchState()
 
-    override fun handleIntent(intent: FleaMarketSearchScreenIntent) =
+    override fun handleIntent(intent: SearchIntent) =
         when (intent) {
-            FleaMarketSearchScreenIntent.ClearQuery -> setState { uiState.value.copy(query = "") }
-            is FleaMarketSearchScreenIntent.ItemClicked -> {}
-            FleaMarketSearchScreenIntent.Retry -> search(uiState.value.query)
-            is FleaMarketSearchScreenIntent.SearchItem -> search(query = intent.query)
-            is FleaMarketSearchScreenIntent.ToggleFavourite -> {}
+            SearchIntent.ClearQuery -> setState { uiState.value.copy(query = "") }
+            is SearchIntent.ItemClicked -> {}
+            SearchIntent.Retry -> search(uiState.value.query)
+            is SearchIntent.SearchItem -> search(query = intent.query)
+            is SearchIntent.ToggleFavourite -> {}
         }
 
     private fun search(query: String) {

@@ -29,8 +29,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
-import com.singularity.tarkov_market.model.search.FleaMarketSearchScreenIntent
-import com.singularity.tarkov_market.presenter.FleaMarketSearchScreenViewModel
+import com.singularity.tarkov_market.model.search.SearchIntent
+import com.singularity.tarkov_market.presenter.SearchViewModel
 import com.singularity.tarkov_market_data.models.SearchedItem
 
 
@@ -41,12 +41,12 @@ fun SearchScreen(onItemClick: (id: String) -> Unit) {
             DaggerFleaMarketComponent.builder().deps(deps = FleaMarketDepsProvider.deps).build()
         }
     val viewModel =
-        viewModel<FleaMarketSearchScreenViewModel>(factory = appComponent.viewModelFactory)
+        viewModel<SearchViewModel>(factory = appComponent.searchViewModelFactory)
 
     val state by viewModel.uiState.collectAsState()
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Button({ viewModel.sendIntent(FleaMarketSearchScreenIntent.SearchItem("AK")) }) {
+        Button({ viewModel.sendIntent(SearchIntent.SearchItem("AK")) }) {
             Text("Search")
         }
 

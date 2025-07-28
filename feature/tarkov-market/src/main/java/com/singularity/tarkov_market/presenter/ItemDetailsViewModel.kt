@@ -2,25 +2,30 @@ package com.singularity.tarkov_market.presenter
 
 import androidx.lifecycle.viewModelScope
 import com.singularity.core.MVIViewModel
-import com.singularity.tarkov_market.model.item.FleaMarketItemScreenIntent
-import com.singularity.tarkov_market.model.item.FleaMarketItemScreenState
+import com.singularity.tarkov_market.model.item.ItemDetailsIntent
+import com.singularity.tarkov_market.model.item.ItemDetailsState
 import com.singularity.tarkov_market_data.repository.FleaMarketRepository
 import com.singularity.tarkov_market_data.type.LanguageCode
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-internal class FleaMarketItemScreenViewModel @Inject constructor(
-    val repository: FleaMarketRepository
-) : MVIViewModel<FleaMarketItemScreenIntent, FleaMarketItemScreenState, Nothing>() {
-    override fun setInitialState(): FleaMarketItemScreenState = FleaMarketItemScreenState()
+internal class ItemDetailsViewModel @AssistedInject constructor(
+    val repository: FleaMarketRepository,
+    @Assisted private val itemId: String,
+) : MVIViewModel<ItemDetailsIntent, ItemDetailsState, Nothing>() {
+    override fun setInitialState(): ItemDetailsState = ItemDetailsState()
+    init {
+        loadItem(itemId)
+    }
 
-    override fun handleIntent(intent: FleaMarketItemScreenIntent) {
+    override fun handleIntent(intent: ItemDetailsIntent) {
         when (intent) {
-            FleaMarketItemScreenIntent.ToggleFavourite -> {
+            ItemDetailsIntent.ToggleFavourite -> {
                 if(uiState.value.detailedItem?.isFavourite==false){
                     saveItem()
                 }
@@ -28,9 +33,10 @@ internal class FleaMarketItemScreenViewModel @Inject constructor(
                     deleteItem()
                 }
             }
-            FleaMarketItemScreenIntent.Refresh -> {}
-            is FleaMarketItemScreenIntent.LoadItem -> {
-                loadItem(intent.id)
+            ItemDetailsIntent.Refresh -> {}
+
+            is ItemDetailsIntent.LoadItem -> {
+
             }
         }
     }

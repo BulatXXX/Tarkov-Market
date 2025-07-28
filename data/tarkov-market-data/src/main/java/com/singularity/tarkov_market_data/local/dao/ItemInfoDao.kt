@@ -5,6 +5,8 @@ import androidx.room.Dao
 import androidx.room.Query
 import androidx.room.Upsert
 import com.singularity.tarkov_market_data.local.entities.ItemInfo
+import com.singularity.tarkov_market_data.type.LanguageCode
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ItemInfoDao {
@@ -16,5 +18,12 @@ interface ItemInfoDao {
 
     @Query("SELECT * FROM item_info WHERE itemId= :id")
     suspend fun get(id: String): ItemInfo
+
+    @Query("""
+        SELECT * FROM item_info
+        WHERE itemId = :id AND languageCode = :lang
+        LIMIT 1
+    """)
+    fun observeInfo(id: String, lang: LanguageCode): Flow<ItemInfo?>
 }
 
