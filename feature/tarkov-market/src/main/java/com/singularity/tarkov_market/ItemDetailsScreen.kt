@@ -66,10 +66,7 @@ fun ItemDetailsScreen(id: String) {
                             }, contentDescription = ""
                     )
                 }
-
-
             }
         }
     }
-
 }

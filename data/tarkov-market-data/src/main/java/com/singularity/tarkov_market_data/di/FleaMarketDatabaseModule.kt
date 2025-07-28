@@ -5,11 +5,12 @@ import androidx.room.Room
 import com.singularity.tarkov_market_data.local.db.TarkovItemsDatabase
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 internal object FleaMarketDatabaseModule {
 
-    @Provides
+    @Provides @Singleton
     fun provideDatabase(
         context: Context
     ): TarkovItemsDatabase =

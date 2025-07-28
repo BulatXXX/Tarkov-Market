@@ -6,7 +6,6 @@ import com.singularity.tarkov_market_data.models.SearchedItem
 import com.singularity.tarkov_market_data.local.dao.ItemFavouriteDao
 import com.singularity.tarkov_market_data.local.dao.ItemInfoDao
 import com.singularity.tarkov_market_data.local.dao.ItemPriceDao
-import com.singularity.tarkov_market_data.local.db.TarkovItemsDatabase
 import com.singularity.tarkov_market_data.local.entities.ItemFavourite
 import com.singularity.tarkov_market_data.local.entities.toItemInfo
 import com.singularity.tarkov_market_data.local.entities.toItemPrice
@@ -26,7 +25,6 @@ import javax.inject.Inject
 
 
 internal class FleaMarketRepositoryImpl @Inject constructor(
-    private val db: TarkovItemsDatabase,
     private val tarkovMarketService: TarkovMarketService,
     private val infoDao: ItemInfoDao,
     private val priceDao: ItemPriceDao,
@@ -75,17 +73,15 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteItem(id: String) {
-
         favDao.delete(id)
         infoDao.delete(id)
         priceDao.delete(id)
-
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun observeFavourites(
         languageCode: LanguageCode,
-        gameMode: GameMode
+        gameMode: GameMode,
     ): Flow<List<FavouriteItem>> =
         favDao.observeFavouritesIds().flowOn(Dispatchers.IO).flatMapLatest { ids ->
             if (ids.isEmpty()) return@flatMapLatest flowOf(emptyList())
@@ -94,17 +90,15 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
                     infoDao.observeInfo(id, languageCode),
                     priceDao.observePrice(id, gameMode),
                 ) { info, price ->
-                    if (info != null && price != null) {
-                        FavouriteItem(
-                            id = id,
-                            name = info.name,
-                            iconLink = info.iconLink,
-                            avg24hPrice = price.avg24Price,
-                            low24hPrice = price.low24Price
-                        )
-                    } else null
+                    if (info == null || price == null) return@combine null
+                    FavouriteItem(
+                        id = id,
+                        name = info.name,
+                        iconLink = info.iconLink,
+                        avg24hPrice = price.avg24Price,
+                        low24hPrice = price.low24Price,
+                    )
                 }
-
             }
             combine(itemFlows) { list -> list.filterNotNull() }
         }.distinctUntilChanged()

@@ -5,7 +5,9 @@ import com.singularity.tarkov_market_data.di.FleaMarketModule
 import com.singularity.tarkov_market.di.FleaMarketDeps
 import dagger.BindsInstance
 import dagger.Component
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [FleaMarketModule::class]
 )
