@@ -17,7 +17,7 @@ interface ItemFavouriteDao {
     suspend fun delete(id: String)
 
     @Query("SELECT EXISTS(SELECT * FROM item_favourite WHERE itemId= :id)")
-    suspend fun isFavourite(id: String): Boolean
+    fun isFavourite(id: String): Flow<Boolean>
 
     @Query("SELECT * FROM item_favourite")
     fun observeFavouritesIds(): Flow<List<String>>

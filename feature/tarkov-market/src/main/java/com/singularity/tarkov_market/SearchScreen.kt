@@ -12,8 +12,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,7 +56,7 @@ fun SearchScreen(onItemClick: (id: String) -> Unit) {
 
         LazyColumn {
             items(state.searchedItems, key = { it.id }) { searchedItem ->
-                ListItem(searchedItem){
+                ListItem(searchedItem) {
                     onItemClick(searchedItem.id)
                 }
                 HorizontalDivider(Modifier, 1.dp, Color.Gray)
@@ -62,12 +66,13 @@ fun SearchScreen(onItemClick: (id: String) -> Unit) {
 }
 
 @Composable
-fun ListItem(searchedItem: SearchedItem,onItemClick: () -> Unit){
+fun ListItem(searchedItem: SearchedItem, onItemClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp).clickable(onClick = {onItemClick() }),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(8.dp)
+            .clickable(onClick = { onItemClick() }),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         AsyncImage(
             model = searchedItem.iconLink,
@@ -79,11 +84,18 @@ fun ListItem(searchedItem: SearchedItem,onItemClick: () -> Unit){
         Spacer(Modifier.width(12.dp))
         Column {
             Text(searchedItem.name, style = MaterialTheme.typography.titleMedium)
-            Text(
-                text = "${searchedItem.avg24hPrice} ₽",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary
-            )
+            Row {
+                Text(
+                    text = "${searchedItem.avg24hPrice} ₽",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Icon(
+                    imageVector = if (searchedItem.isFavourite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = ""
+                )
+            }
         }
+
     }
 }
