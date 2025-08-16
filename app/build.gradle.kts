@@ -66,6 +66,9 @@ dependencies {
     implementation(libs.okhttp.core)
     implementation(libs.okhttp.logging)
 
+    implementation(libs.androidx.paging)
+    implementation(libs.androidx.paging.compose)
+
     implementation(project(":feature:tarkov-market"))
     implementation(project(":feature:profile"))
     implementation(project(":data:tarkov-market-data"))

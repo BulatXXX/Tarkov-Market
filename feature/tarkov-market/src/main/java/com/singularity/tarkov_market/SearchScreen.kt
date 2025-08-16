@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -30,6 +30,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.singularity.tarkov_market.di.DaggerFleaMarketComponent
 import com.singularity.tarkov_market.di.FleaMarketDepsProvider
@@ -47,19 +48,28 @@ fun SearchScreen(onItemClick: (id: String) -> Unit) {
     val viewModel =
         viewModel<SearchViewModel>(factory = appComponent.searchViewModelFactory)
 
-    val state by viewModel.uiState.collectAsState()
+    val items = viewModel.pagingFlow.collectAsLazyPagingItems()
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Button({ viewModel.sendIntent(SearchIntent.SearchItem("AK")) }) {
             Text("Search")
         }
 
+//        LazyColumn {
+//            items(state.searchedItems, key = { it.id }) { searchedItem ->
+//                ListItem(searchedItem) {
+//                    onItemClick(searchedItem.id)
+//                }
+//                HorizontalDivider(Modifier, 1.dp, Color.Gray)
+//            }
+//        }
         LazyColumn {
-            items(state.searchedItems, key = { it.id }) { searchedItem ->
-                ListItem(searchedItem) {
-                    onItemClick(searchedItem.id)
+            items(items.itemCount) { index ->
+                val item = items[index]
+                if (item != null) {
+                    ListItem(item) { onItemClick(item.id) }
+                    HorizontalDivider(Modifier.fillMaxWidth(), 1.dp, Color.Gray)
                 }
-                HorizontalDivider(Modifier, 1.dp, Color.Gray)
             }
         }
     }

@@ -54,8 +54,11 @@ dependencies {
     implementation(libs.dagger)
     ksp(libs.dagger.compiler)
 
-    implementation(libs.coil.compose)
-    implementation(project(":data:tarkov-market-data"))
+    implementation(libs.androidx.paging)
+    implementation(libs.androidx.paging.compose)
 
+    implementation(libs.coil.compose)
+
+    implementation(project(":data:tarkov-market-data"))
     implementation(project(":core"))
 }

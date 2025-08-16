@@ -1,5 +1,9 @@
 package com.singularity.tarkov_market_data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.singularity.tarkov_market_data.local.dao.ItemFavouriteDao
 import com.singularity.tarkov_market_data.local.dao.ItemInfoDao
 import com.singularity.tarkov_market_data.local.dao.ItemPriceDao
@@ -9,6 +13,7 @@ import com.singularity.tarkov_market_data.local.entities.toItemPrice
 import com.singularity.tarkov_market_data.models.DetailedItem
 import com.singularity.tarkov_market_data.models.FavouriteItem
 import com.singularity.tarkov_market_data.models.SearchedItem
+import com.singularity.tarkov_market_data.remote.SearchPagingSource
 import com.singularity.tarkov_market_data.remote.services.TarkovMarketService
 import com.singularity.tarkov_market_data.type.GameMode
 import com.singularity.tarkov_market_data.type.LanguageCode
@@ -61,6 +66,27 @@ internal class FleaMarketRepositoryImpl @Inject constructor(
             }
         }
         .flowOn(Dispatchers.IO)
+
+    override fun searchPaged(
+        query: String,
+        language: LanguageCode,
+        gameMode: GameMode
+    ): Flow<PagingData<SearchedItem>> =
+        Pager(
+            config = PagingConfig(pageSize = 10, enablePlaceholders = false),
+            pagingSourceFactory = {
+                SearchPagingSource(
+                    tarkovMarketService,
+                    query,
+                    language,
+                    gameMode,
+                    10
+                )
+            }
+        ).flow.combine(favDao.observeFavouritesIds().map { it.toSet() }) { paging, favIds ->
+            paging.map { it.copy(isFavourite = it.id in favIds) }
+        }.flowOn(Dispatchers.IO)
+
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getItemById(
